@@ -3,6 +3,7 @@ import {isEnvBrowser} from './utils/misc';
 import {useNuiEvent} from './hooks/useNuiEvent';
 import {fetchNui} from './utils/fetchNui';
 import {ItemSlot, NuiInventory} from "./types";
+import {InventorySlot} from "./components/InventorySlot";
 
 
 if (isEnvBrowser()) {
@@ -78,37 +79,47 @@ function App() {
   console.log(visible);
   console.log(inventory);
 
+
+  const slotsToRender = [];
+  if (inventory) {
+    for (let i = 1; i <= inventory.slots; i++) {
+      const item = inventory.items[i] || null; // Get item for slot `i`, or null if empty
+      slotsToRender.push({
+        slot: i,
+        item: item,
+      });
+    }
+  }
+
+
   return (
     <>
       {visible && inventory && (
-        <div style={{padding: '20px', background: 'rgba(0, 0, 0, 0.8)', color: 'white', fontFamily: 'sans-serif'}}>
-          <div style={{border: '1px solid white', padding: '10px', minWidth: '300px'}}>
+        // Use a wrapper for the whole UI
+        <div className="inventory-ui-wrapper">
+          <div className="inventory-container">
             {/* Header */}
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              borderBottom: '1px solid #555',
-              paddingBottom: '10px'
-            }}>
+            <div className="inventory-header">
               <h3>{inventory.label}</h3>
               <button type='button' onClick={handleClose}>Close [ESC]</button>
             </div>
 
             {/* Info */}
-            <div style={{padding: '10px 0'}}>
+            <div className="inventory-info">
               <p>Weight: {inventory.currentWeight} / {inventory.maxWeight}</p>
-              <p>Slots Used: {Object.keys(inventory.items).length} / {inventory.slots}</p>
+              <p>Slots: {Object.keys(inventory.items).length} / {inventory.slots}</p>
             </div>
 
-            {/* Item List (Simple) */}
-            <div style={{maxHeight: '400px', overflowY: 'auto'}}>
-              <h4>Items:</h4>
-              <pre>
-                {/* We'll just dump the JSON for now. Next step is to make a grid! */}
-                {JSON.stringify(inventory.items, null, 2)}
-              </pre>
+            {/* Item Grid */}
+            <div className="inventory-grid">
+              {slotsToRender.map((slotData) => (
+                <InventorySlot
+                  key={slotData.slot}
+                  slotNumber={slotData.slot}
+                  item={slotData.item}
+                />
+              ))}
             </div>
-
           </div>
         </div>
       )}
