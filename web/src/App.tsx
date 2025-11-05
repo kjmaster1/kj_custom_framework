@@ -2,14 +2,14 @@ import {useEffect, useState} from 'react';
 import {isEnvBrowser} from './utils/misc';
 import {useNuiEvent} from './hooks/useNuiEvent';
 import {fetchNui} from './utils/fetchNui';
-import {ItemSlot, NuiInventory} from "./types";
+import {ItemDefinition, ItemSlot, NuiInventory} from "./types";
 import {InventorySlot} from "./components/InventorySlot";
+import {useItemDefinitions} from "./context/ItemDefinitionsContext";
 
 
 if (isEnvBrowser()) {
   const mockItems: Record<number, ItemSlot> = {
     1: {name: 'water_bottle', quantity: 5},
-    2: {name: 'sandwich', quantity: 2},
     5: {name: 'lockpick', quantity: 10, metadata: {quality: 80}},
   };
 
@@ -33,15 +33,63 @@ if (isEnvBrowser()) {
       })
     );
   }, 100);
+
+
+  const mockDefinitions: Record<string, ItemDefinition> = {
+    water_bottle: {
+      name: "water_bottle",
+      label: "Water Bottle",
+      weight: 500,
+      type: "item",
+      image: "water_bottle.png",
+      unique: false,
+      useable: true,
+      consumable: true,
+      description: "Keeps you hydrated."
+    },
+
+    lockpick: {
+      name: "lockpick",
+      label: "Lockpick",
+      weight: 100,
+      type: "item",
+      image: "lockpick.png",
+      unique: false,
+      useable: true,
+      consumable: false,
+      description: "Might open a lock... or break."
+    },
+  };
+
+  // Simulate receiving definitions
+  setTimeout(() => {
+    window.dispatchEvent(
+      new MessageEvent('message', {
+        data: {
+          action: 'setDefinitions',
+          data: mockDefinitions,
+        },
+      })
+    );
+  }, 100);
 }
 
 function App() {
   const [visible, setVisible] = useState(isEnvBrowser());
   const [inventory, setInventory] = useState<NuiInventory | null>(null);
 
+  // Get the setDefinitions function from our context
+  const { setDefinitions } = useItemDefinitions();
+
   // Listen for visibility changes
   useNuiEvent('setVisible', (data: boolean) => {
     setVisible(data);
+  });
+
+  // Listen for item definitions
+  useNuiEvent<Record<string, ItemDefinition>>('setDefinitions', (data) => {
+    console.log("setDefinitions", data);
+    setDefinitions(data);
   });
 
   // Listen for inventory data

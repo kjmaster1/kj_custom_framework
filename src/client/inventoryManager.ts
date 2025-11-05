@@ -1,5 +1,6 @@
 // src/client/InventoryManager.ts
-import {Inventory, ItemSlot} from '../common';
+import {Inventory, Item, ItemSlot} from '../common';
+import {GetAllItems} from "./configRegistry";
 
 // This is what the server *sends* (items as a plain object)
 interface InventorySyncData {

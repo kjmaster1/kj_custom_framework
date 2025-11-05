@@ -1,6 +1,5 @@
 // Client-side private registry. This will be populated by the server.
-import {Job} from "../common";
-import {Item} from "../common";
+import {Item, Job} from "../common";
 
 const Registry = {
   Items: new Map<string, Item>(),
@@ -33,6 +32,11 @@ export function InitConfigRegistry() {
     locales: Record<string, any>,
   }) => {
     console.log('[Config] Received config data from server.');
+
+    SendNUIMessage({
+      action: 'setDefinitions',
+      data: data.items,
+    });
 
     // Populate our local client Maps
     populateMapFromRecord(Registry.Items, data.items);

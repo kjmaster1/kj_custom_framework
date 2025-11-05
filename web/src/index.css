@@ -93,9 +93,11 @@ p {
 .inventory-grid::-webkit-scrollbar {
   width: 4px;
 }
+
 .inventory-grid::-webkit-scrollbar-track {
   background: rgba(0, 0, 0, 0.1);
 }
+
 .inventory-grid::-webkit-scrollbar-thumb {
   background: #33343F;
 }
@@ -179,4 +181,34 @@ p {
   height: 100%;
   background: #4a90e2; /* Blue for quality */
   border-bottom-left-radius: 4px;
+}
+
+/* --- Tooltip Styling --- */
+.item-tooltip {
+  position: absolute;
+  /* Position it outside the slot. Adjust as needed. */
+  bottom: 105%;
+  left: 0;
+  width: 200px;
+  background-color: #22232c;
+  border: 1px solid #33343F;
+  padding: 10px;
+  border-radius: 4px;
+  z-index: 100;
+  color: #c1c2c5;
+  font-size: 13px;
+  pointer-events: none; /* So it doesn't block mouse leave */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+.item-tooltip h4 {
+  margin: 0 0 5px 0;
+  color: white;
+  font-size: 15px;
+  border-bottom: 1px solid #555;
+  padding-bottom: 5px;
+}
+
+.item-tooltip p {
+  margin: 3px 0;
 }
