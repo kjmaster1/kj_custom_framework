@@ -2,9 +2,9 @@ import React from 'react';
 import { useTooltip } from '../context/TooltipContext';
 
 export const GlobalTooltip: React.FC = () => {
-  const { item, coords } = useTooltip();
+  const { itemSlot, item, coords } = useTooltip();
 
-  if (!item || !coords) {
+  if (!itemSlot || !item || !coords) {
     return null;
   }
 
@@ -22,6 +22,10 @@ export const GlobalTooltip: React.FC = () => {
       <h4>{item.label}</h4>
       <p>{item.description}</p>
       <p>Weight: {(item.weight / 1000).toFixed(2)} kg</p>
+      <p>Total Weight: {((item.weight / 1000) * itemSlot.quantity).toFixed(2)} kg</p>
+      {itemSlot.metadata?.quality &&
+      <p>Quality: {itemSlot.metadata.quality}%</p>
+      }
     </div>
   );
 };

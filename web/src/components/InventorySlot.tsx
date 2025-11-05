@@ -18,16 +18,16 @@ export const InventorySlot: React.FC<Props> = ({ slotNumber, item }) => {
 
   // --- Tooltip Handlers ---
   const handleMouseEnter = (e: React.MouseEvent) => {
-    if (itemDefinition) {
+    if (itemDefinition && item) {
       // Show the global tooltip with item data and mouse coordinates
-      showTooltip(itemDefinition, { x: e.clientX, y: e.clientY });
+      showTooltip(item, itemDefinition, { x: e.clientX, y: e.clientY });
     }
   };
 
   // Move the tooltip with the mouse
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (itemDefinition) {
-      showTooltip(itemDefinition, { x: e.clientX, y: e.clientY });
+    if (itemDefinition && item) {
+      showTooltip(item, itemDefinition, { x: e.clientX, y: e.clientY });
     }
   }
 

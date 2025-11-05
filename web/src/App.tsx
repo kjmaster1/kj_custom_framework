@@ -6,6 +6,7 @@ import {ItemDefinition, ItemSlot, NuiInventory} from "./types";
 import {InventorySlot} from "./components/InventorySlot";
 import {useItemDefinitions} from "./context/ItemDefinitionsContext";
 import {GlobalTooltip} from "./components/GlobalTooltip";
+import {useTooltip} from "./context/TooltipContext";
 
 
 if (isEnvBrowser()) {
@@ -19,7 +20,7 @@ if (isEnvBrowser()) {
     label: 'Player Inventory',
     slots: 40,
     maxWeight: 100000,
-    currentWeight: 12000,
+    currentWeight: 3500,
     items: mockItems,
   };
 
@@ -82,6 +83,8 @@ function App() {
   // Get the setDefinitions function from our context
   const { setDefinitions } = useItemDefinitions();
 
+  const {hideTooltip} = useTooltip();
+
   // Listen for visibility changes
   useNuiEvent('setVisible', (data: boolean) => {
     setVisible(data);
@@ -102,6 +105,7 @@ function App() {
   // Handle closing the UI
   function handleClose() {
     console.log("close");
+    hideTooltip();
     setVisible(false);
     void fetchNui('exit'); // This tells the client we've closed the UI
     // We need to handle this on the client-side to remove focus
@@ -165,7 +169,7 @@ function App() {
 
             {/* Info */}
             <div className="inventory-info">
-              <p>Weight: {inventory.currentWeight} / {inventory.maxWeight}</p>
+              <p>Weight: {(inventory.currentWeight / 1000).toFixed(2)} kg / {(inventory.maxWeight / 1000).toFixed(2)} kg</p>
               <p>Slots: {Object.keys(inventory.items).length} / {inventory.slots}</p>
             </div>
 
