@@ -1,6 +1,8 @@
 // Client-side private registry. This will be populated by the server.
 import {Item, Job} from "../common";
 
+let cachedItemDefinitions: Record<string, Item> | null = null;
+
 const Registry = {
   Items: new Map<string, Item>(),
   Jobs: new Map<string, Job>(),
@@ -33,10 +35,7 @@ export function InitConfigRegistry() {
   }) => {
     console.log('[Config] Received config data from server.');
 
-    SendNUIMessage({
-      action: 'setDefinitions',
-      data: data.items,
-    });
+    cachedItemDefinitions = data.items;
 
     // Populate our local client Maps
     populateMapFromRecord(Registry.Items, data.items);
@@ -81,4 +80,8 @@ export function GetLocale(lang: string): any | undefined {
  */
 export function GetLocales(): Map<string, any> {
   return Registry.Locales;
+}
+
+export function GetItemDefinitions() {
+  return cachedItemDefinitions;
 }

@@ -106,6 +106,14 @@ function App() {
     // We need to handle this on the client-side to remove focus
   }
 
+  // Tell the client we are loaded
+  useEffect(() => {
+    // This runs only once when the App component mounts
+    if (!isEnvBrowser()) {
+      fetchNui('uiLoaded').catch(console.error);
+    }
+  }, []);
+
   useEffect(() => {
     // Only run this when the UI is visible
     if (!visible) {

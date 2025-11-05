@@ -1,6 +1,6 @@
 // src/client/InventoryManager.ts
-import {Inventory, Item, ItemSlot} from '../common';
-import {GetAllItems} from "./configRegistry";
+import {Inventory, ItemSlot} from '../common';
+import {GetItemDefinitions} from "./configRegistry";
 
 // This is what the server *sends* (items as a plain object)
 interface InventorySyncData {
@@ -93,6 +93,26 @@ RegisterCommand('inventory', () => {
 
   SetNuiFocus(true, true);
 }, false);
+
+
+RegisterNuiCallback('uiLoaded', (data: any, cb: Function) => {
+  console.log('[Inv] NUI is loaded and ready to receive data.');
+
+  const definitions = GetItemDefinitions();
+
+  // Now that we know the NUI is listening, send the definitions.
+  if (definitions) {
+    SendNUIMessage({
+      action: 'setDefinitions',
+      data: definitions,
+    });
+  } else {
+    console.error('[Inv] UI loaded, but item definitions are not yet cached!');
+  }
+
+  cb(1); // Acknowledge the callback
+});
+
 
 /**
  * Gets the player's personal inventory.
