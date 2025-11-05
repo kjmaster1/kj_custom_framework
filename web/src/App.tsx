@@ -5,6 +5,7 @@ import {fetchNui} from './utils/fetchNui';
 import {ItemDefinition, ItemSlot, NuiInventory} from "./types";
 import {InventorySlot} from "./components/InventorySlot";
 import {useItemDefinitions} from "./context/ItemDefinitionsContext";
+import {GlobalTooltip} from "./components/GlobalTooltip";
 
 
 if (isEnvBrowser()) {
@@ -150,6 +151,8 @@ function App() {
 
   return (
     <>
+      <GlobalTooltip />
+
       {visible && inventory && (
         // Use a wrapper for the whole UI
         <div className="inventory-ui-wrapper">

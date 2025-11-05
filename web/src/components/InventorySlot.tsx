@@ -1,75 +1,77 @@
-import React, {useState} from 'react';
+import React from 'react'; // Removed useState
 import { ItemSlot } from '../types';
-import {useItemDefinitions} from "../context/ItemDefinitionsContext";
+import { useItemDefinitions } from '../context/ItemDefinitionsContext';
+import { useTooltip } from '../context/TooltipContext';
 
 interface Props {
   slotNumber: number;
   item: ItemSlot | null;
 }
 
-// A simple component to render one slot
 export const InventorySlot: React.FC<Props> = ({ slotNumber, item }) => {
-
-  // Get the definitions dictionary from our context
   const { definitions } = useItemDefinitions();
-  const [isTooltipVisible, setTooltipVisible] = useState(false);
 
-  // Get the static definition for this item
-  // If item exists, find its definition. If not, definition is null.
+  // --- Get functions from the global tooltip context ---
+  const { showTooltip, hideTooltip } = useTooltip();
+
   const itemDefinition = item ? definitions[item.name] : null;
 
   // --- Tooltip Handlers ---
-
-  // Add a simple hover-based tooltip
-  const handleMouseEnter = () => {
+  const handleMouseEnter = (e: React.MouseEvent) => {
     if (itemDefinition) {
-      setTooltipVisible(true);
+      // Show the global tooltip with item data and mouse coordinates
+      showTooltip(itemDefinition, { x: e.clientX, y: e.clientY });
     }
   };
 
+  // Move the tooltip with the mouse
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (itemDefinition) {
+      showTooltip(itemDefinition, { x: e.clientX, y: e.clientY });
+    }
+  }
+
   const handleMouseLeave = () => {
-    setTooltipVisible(false);
+    // Hide the global tooltip
+    hideTooltip();
   };
 
   if (item && itemDefinition) {
-    // This slot has an item AND we found its definition
     return (
       <div
         className="inventory-slot with-item"
         data-slot-id={slotNumber}
         onMouseEnter={handleMouseEnter}
+        onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        {/* We'll add the item-name as a background-image later */}
-        {/* <div className="item-image" style={{ backgroundImage: `url(./images/${item.name}.png)` }} /> */}
-
-        {/* Use the LABEL from the definition */}
-        <div className="item-name">{itemDefinition.label}</div>
-
-        <div className="item-quantity">{item.quantity}</div>
-        {item.metadata?.quality && (
-          <div className="item-quality-bar">
-            <div style={{ width: `${item.metadata.quality}%` }} />
+        <div className="slot-content-wrapper">
+          <div className="slot-header">
+            <div className="slot-number">{slotNumber}</div>
+            <div className="item-quantity">{item.quantity}</div>
           </div>
-        )}
-        <div className="slot-number">{slotNumber}</div>
-
-        {/* --- Simple Tooltip --- */}
-        {isTooltipVisible && (
-          <div className="item-tooltip">
-            <h4>{itemDefinition.label}</h4>
-            <p>{itemDefinition.description}</p>
-            <p>Weight: {itemDefinition.weight}</p>
+          <div className="slot-footer">
+            <div className="item-name">{itemDefinition.label}</div>
+            {item.metadata?.quality && (
+              <div className="item-quality-bar">
+                <div style={{ width: `${item.metadata.quality}%` }} />
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     );
   }
 
-  // This is an empty slot or an item with no definition
+  // This is an empty slot
   return (
     <div className="inventory-slot empty" data-slot-id={slotNumber}>
-      <div className="slot-number">{slotNumber}</div>
+      {/* Make sure empty slots also have the wrapper for consistent layout */}
+      <div className="slot-content-wrapper">
+        <div className="slot-header">
+          <div className="slot-number">{slotNumber}</div>
+        </div>
+      </div>
     </div>
   );
 };
