@@ -38,6 +38,7 @@ class InventoryManager {
     const invId = `player-${citizenid}`;
 
     const result = await MySQL.scalar('SELECT inventory FROM characters WHERE citizenid = ?', [citizenid]);
+
     const items = deserializeItems(result as string | null);
 
     // TODO: Get real slots/weight from config or player data
@@ -102,7 +103,8 @@ class InventoryManager {
   public onPlayerDropped(source: number) {
     const invId = this.playerInvIdMap.get(source);
     if (invId) {
-      this.savePlayerInventory(invId).then(r => {});
+      this.savePlayerInventory(invId).then(r => {
+      });
       this.activeInventories.delete(invId);
       this.playerInvIdMap.delete(source);
       console.log(`[InventoryManager] Saved and unloaded inventory ${invId}`);
@@ -131,7 +133,8 @@ class InventoryManager {
   private onInventoryUpdate(inventory: Inventory) {
     // 1. Save to DB (if it's a player inv, others save differently)
     if (inventory.id.startsWith('player-')) {
-      this.savePlayerInventory(inventory.id).then(r => {});
+      this.savePlayerInventory(inventory.id).then(r => {
+      });
     }
 
     // 2. Sync to clients

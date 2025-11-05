@@ -205,4 +205,19 @@ export class Inventory {
         }
         return null;
     }
+
+  /**
+   * Custom toJSON method for JSON.stringify.
+   * Converts the 'items' Map to a plain object.
+   */
+  public toJSON() {
+    return {
+      id: this.id,
+      label: this.label,
+      slots: this.slots,
+      maxWeight: this.maxWeight,
+      items: Object.fromEntries(this.items),
+      currentWeight: this.currentWeight,
+    };
+  }
 }

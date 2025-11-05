@@ -150,6 +150,7 @@ onNet('Framework:server:selectCharacter', async (citizenid: string) => {
 
       // Example: Give a new player a water bottle
       if (inv.items.size === 0) {
+        console.log(`[Core] ${playerData.name} given water bottle!`);
         inv.addItem('water_bottle', 1);
       }
     }
