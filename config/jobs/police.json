@@ -1,0 +1,28 @@
+{
+  "lspd": {
+    "label": "Los Santos Police Department",
+    "defaultDuty": true,
+    "grades": {
+      "0": {
+        "name": "Recruit",
+        "level": 0,
+        "is_boss": false
+      },
+      "1": {
+        "name": "Officer",
+        "level": 1,
+        "is_boss": false
+      },
+      "2": {
+        "name": "Sergeant",
+        "level": 2,
+        "is_boss": false
+      },
+      "3": {
+        "name": "Chief",
+        "level": 3,
+        "is_boss": true
+      }
+    }
+  }
+}

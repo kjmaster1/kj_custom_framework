@@ -1,0 +1,17 @@
+{
+  "error": {
+    "not_online": "Player not online",
+    "item_not_exist": "Item does not exist",
+    "too_heavy": "Inventory too full"
+  },
+  "success": {
+    "character_deleted": "Character deleted!"
+  },
+  "info": {
+    "item_found_label": "Test command: Found item. Label: %s",
+    "item_not_found": "Test command: Item '%s' not found!",
+    "job_found_label": "Test command: Found job. Label: %s",
+    "job_grade_label": "Test command: Default grade: %s",
+    "job_not_found": "Test command: Job '%s' not found!"
+  }
+}

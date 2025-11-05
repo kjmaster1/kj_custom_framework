@@ -1,0 +1,24 @@
+{
+  "water_bottle": {
+    "name": "water_bottle",
+    "label": "Water Bottle",
+    "weight": 500,
+    "type": "item",
+    "image": "water_bottle.png",
+    "unique": false,
+    "useable": true,
+    "consumable": true,
+    "description": "Keeps you hydrated."
+  },
+  "lockpick": {
+    "name": "lockpick",
+    "label": "Lockpick",
+    "weight": 100,
+    "type": "item",
+    "image": "lockpick.png",
+    "unique": false,
+    "useable": true,
+    "consumable": false,
+    "description": "Might open a lock... or break."
+  }
+}
