@@ -20,25 +20,41 @@ p {
   padding: 0;
 }
 
-/* Main UI Wrapper - centers the inventory */
+/* Main UI Wrapper */
 .inventory-ui-wrapper {
-  height: 100%;
-  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  /* --- Use Flexbox for layout --- */
   display: flex;
+  flex-direction: row;
   justify-content: center;
-  align-items: center;
+  align-items: start;
+
+  padding-top: clamp(200px, 15vw, 800px);
+  height: 100%; /* Ensure full height */
+  gap: 24px; /* Adds a nice space between them */
+
   background: rgba(0, 0, 0, 0.3); /* Faded background */
+  overflow: auto; /* Allow scrolling if needed */
+
+  box-sizing: border-box;
 }
 
 /* Inventory container */
 .inventory-container {
-  width: 600px; /* Adjust width as needed */
-  max-width: 90vw;
-  background-color: #22232c; /* Dark background from ox_inventory */
+  background-color: #22232c;
   border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 4px;
+  border-radius: 8px;
+
+  width: fit-content;
+  max-width: 900px;
+
+  backdrop-filter: blur(5px);
   padding: 16px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* Header (Label + Close Button) */
@@ -81,11 +97,12 @@ p {
 /* The Item Grid */
 .inventory-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr); /* 5 columns. Change '5' to adjust */
+  grid-template-columns: repeat(5, minmax(70px, 1fr)); /* 5 columns. Change '5' to adjust */
   grid-auto-rows: 1fr;
   gap: 4px;
-  max-height: 550px; /* Set a max height */
+  max-height: 366px; /* Set a max height */
   overflow-y: auto; /* Allow scrolling for items */
+  overflow-x: hidden;
   padding-right: 4px; /* Space for scrollbar */
 }
 
@@ -221,4 +238,30 @@ p {
 
 .item-tooltip p {
   margin: 3px 0;
+}
+
+.context-menu {
+  background: #222;
+  border: 1px solid #444;
+  border-radius: 4px;
+  min-width: 150px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+}
+
+.context-menu-list {
+  list-style: none;
+  padding: 4px;
+  margin: 0;
+}
+
+.context-menu-list li {
+  padding: 8px 12px;
+  cursor: pointer;
+  color: #eee;
+  font-size: 14px;
+}
+
+.context-menu-list li:hover {
+  background: #0078d4;
+  color: #fff;
 }

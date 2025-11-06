@@ -113,6 +113,64 @@ RegisterNuiCallback('uiLoaded', (data: any, cb: Function) => {
   cb(1); // Acknowledge the callback
 });
 
+// --- moveItem NUI Callback ---
+RegisterNuiCallback('moveItem', (data: {
+  from: { inventory: string, slot: number },
+  to: { inventory: string, slot: number }
+}, cb: Function) => {
+
+  // Acknowledge the NUI callback immediately
+  cb(1);
+
+  // Could do client-side validation here if needed.
+  // For now, we'll just tell the server what the player wants to do.
+
+  console.log(`[Inv] NUI requested move: ${data.from.inventory}:${data.from.slot} -> ${data.to.inventory}:${data.to.slot}`);
+
+  // 'emitNet' to the server event
+  emitNet('core:server:moveInventoryItem', data);
+});
+
+// --- contextAction NUI Callback ---
+RegisterNuiCallback('contextAction', (data: {
+  action: string,
+  inventoryId: string,
+  slot: number,
+  item: ItemSlot
+}, cb: Function) => {
+
+  cb(1);
+
+  console.log(`[Inv] Context Action: ${data.action} on ${data.item.name} in slot ${data.slot}`);
+
+  // Send the action to the server to be handled
+
+  if (data.action === 'use') {
+    emitNet('core:server:useItem', {
+      inventoryId: data.inventoryId,
+      slot: data.slot
+    });
+  }
+
+  if (data.action === 'drop') {
+    // TODO: Add logic to get quantity from player
+    emitNet('core:server:dropItem', {
+      inventoryId: data.inventoryId,
+      slot: data.slot,
+      quantity: data.item.quantity // Drops the whole stack for now
+    });
+  }
+
+  if (data.action === 'give') {
+    // TODO: Add logic to get target player
+    emitNet('core:server:giveItem', {
+      inventoryId: data.inventoryId,
+      slot: data.slot,
+      quantity: data.item.quantity,
+      target: -1 // -1 = closest player
+    });
+  }
+});
 
 /**
  * Gets the player's personal inventory.

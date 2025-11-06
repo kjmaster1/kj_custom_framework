@@ -23,8 +23,8 @@
   "devDependencies": {
     "@citizenfx/client": "latest",
     "@citizenfx/server": "latest",
-    "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@communityox/fx-utils": "^0.0.4",
+    "@jgoz/esbuild-plugin-typecheck": "^4.0.3",
     "@types/node": "^22.13.9",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
@@ -35,10 +35,12 @@
   },
   "dependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@nativewrappers/fivem": "latest",
     "@communityox/ox_lib": "latest",
     "@communityox/oxmysql": "latest",
+    "@nativewrappers/fivem": "latest",
     "react": "^18.3.1",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
     "react-dom": "^18.3.1"
   },
   "pnpm": {

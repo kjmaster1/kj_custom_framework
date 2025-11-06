@@ -24,7 +24,10 @@ export function RegisterUsableItem(itemName: string, callback: (source: number, 
  * Handles the 'core:server:useItem' event from the client.
  * It checks inventory and, if successful, triggers the registered callback.
  */
-onNet('core:server:useItem', async (slot: number) => {
+onNet('core:server:useItem', async (data: {
+  inventoryId: string,
+  slot: number,
+}) => {
   const src = global.source;
   const Player = Core.getPlayer(src);
 
@@ -32,6 +35,8 @@ onNet('core:server:useItem', async (slot: number) => {
 
   const inv = InvManager.getPlayerInventory(src);
   if (!inv) return;
+
+  const slot = data.slot;
 
   const itemSlot = inv.getItem(slot);
   if (!itemSlot) {

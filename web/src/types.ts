@@ -45,3 +45,18 @@ export interface NuiInventory {
   currentWeight: number;
   items: Record<number, ItemSlot>; // <slot, item>
 }
+
+// Unique key for draggable item type
+export const ItemTypes = {
+  INVENTORY_SLOT: 'inventorySlot',
+};
+
+// This interface defines the data that gets passed
+// when an item is dragged.
+export interface DragItem {
+  type: string;
+  inventoryId: string; // The inventory it came from
+  slotNumber: number;  // The slot it came from
+  item: ItemSlot;
+  itemDefinition: ItemDefinition;
+}
