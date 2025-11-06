@@ -34,7 +34,7 @@ p {
   justify-content: center;
   align-items: start;
 
-  padding-top: clamp(200px, 15vw, 800px);
+  padding-top: clamp(200px,25vw,1000px);
   height: 100%; /* Ensure full height */
   gap: 24px; /* Adds a nice space between them */
 
