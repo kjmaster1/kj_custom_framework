@@ -59,4 +59,6 @@ export interface DragItem {
   slotNumber: number;  // The slot it came from
   item: ItemSlot;
   itemDefinition: ItemDefinition;
+  width?: number;
+  height?: number;
 }

@@ -9,6 +9,7 @@ import {GlobalTooltip} from "./components/GlobalTooltip";
 import {useTooltip} from "./context/TooltipContext";
 import {useContextMenu} from "./context/ContextMenuContext";
 import {ContextMenu} from "./components/ContextMenu";
+import {DragPreview} from "./components/DragPreview";
 
 
 if (isEnvBrowser()) {
@@ -189,6 +190,7 @@ function App() {
     <>
       <GlobalTooltip />
       <ContextMenu />
+      <DragPreview />
 
       {/* Only show if UI is visible AND player inv is loaded */}
       {visible && leftInventory && (

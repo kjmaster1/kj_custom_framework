@@ -1,4 +1,4 @@
-import React from 'react'; // Removed useState
+import React, {useRef} from 'react'; // Removed useState
 import {DragItem, ItemSlot, ItemTypes} from '../types';
 import {useItemDefinitions} from '../context/ItemDefinitionsContext';
 import {useTooltip} from '../context/TooltipContext';
@@ -20,6 +20,8 @@ export const InventorySlot: React.FC<Props> = ({slotNumber, item, inventoryId}) 
 
   const {showContextMenu} = useContextMenu();
 
+  const slotRef = useRef<HTMLDivElement>(null);
+
   const itemDefinition = item ? definitions[item.name] : null;
 
   // --- Generate the image URL ---
@@ -34,8 +36,9 @@ export const InventorySlot: React.FC<Props> = ({slotNumber, item, inventoryId}) 
     type: ItemTypes.INVENTORY_SLOT,
     // The 'item' is the data payload for the drag operation
     item: (): DragItem => {
+      const size = slotRef.current?.getBoundingClientRect();
       // We must return all data needed to identify the item
-      return {type: ItemTypes.INVENTORY_SLOT, inventoryId, slotNumber, item: item!, itemDefinition: itemDefinition!}
+      return {type: ItemTypes.INVENTORY_SLOT, inventoryId, slotNumber, item: item!, itemDefinition: itemDefinition!, width: size?.width || 80, height: size?.height || 80};
     },
     canDrag: !!item, // You can only drag if an item exists
     collect: (monitor) => ({
@@ -83,7 +86,12 @@ export const InventorySlot: React.FC<Props> = ({slotNumber, item, inventoryId}) 
 
   // --- Combine Refs ---
   // Need to attach *both* the drag and drop refs to div
-  const combinedRef = (node: HTMLDivElement) => drag(drop(node));
+  const combinedRef = (node: HTMLDivElement) => {
+    // @ts-ignore
+    slotRef.current = node;
+    drag(node);
+    drop(node);
+  }
 
   // --- Tooltip Handlers ---
   const handleMouseEnter = (e: React.MouseEvent) => {
