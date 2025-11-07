@@ -17,4 +17,6 @@ export interface Item {
   consumable: boolean;
   // We can add metadata, weapon data, etc. here later
   description: string;
+
+  maxStack?: number;
 }

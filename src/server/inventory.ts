@@ -1,5 +1,6 @@
 import {ItemSlot} from '../common';
 import {GetItem} from './configLoader';
+import {InvManager} from "./inventoryManager";
 
 type InventoryItemMap = Map<number, ItemSlot>; // Map<slot, ItemSlot>
 
@@ -105,7 +106,7 @@ export class Inventory {
         }
 
         // Check for stacking
-        const stackSlot = this.findStackableSlot(itemName);
+        const stackSlot = this.findStackableSlot({name: itemName, quantity: quantity});
         if (stackSlot) return true; // Can always stack
 
         // Check for empty slot
@@ -129,8 +130,14 @@ export class Inventory {
             return false; // Overweight or no slots
         }
 
+        const newSlot: ItemSlot = {
+          name: itemName,
+          quantity: quantity,
+          metadata: metadata || {},
+        }
+
         // 1. Try to stack
-        const stackSlotNum = this.findStackableSlot(itemName);
+        const stackSlotNum = this.findStackableSlot(newSlot);
         if (stackSlotNum) {
             const itemSlot = this.items.get(stackSlotNum)!;
             itemSlot.quantity += quantity;
@@ -141,11 +148,7 @@ export class Inventory {
         // 2. Find empty slot
         const emptySlot = this.findEmptySlot();
         if (emptySlot) {
-            this.setSlot(emptySlot, {
-                name: itemName,
-                quantity: quantity,
-                metadata: metadata || {},
-            });
+            this.setSlot(emptySlot, newSlot);
             return true;
         }
 
@@ -195,20 +198,19 @@ export class Inventory {
 
     /**
      * Finds the first slot containing an item that can be stacked with.
-     * @param itemName The name of the item to stack.
      * @returns Slot number or null if no stackable slot found.
+     * @param newSlot
      */
-    private findStackableSlot(itemName: string): number | null {
-        const itemConfig = GetItem(itemName);
+    private findStackableSlot(newSlot: ItemSlot): number | null {
+        const itemConfig = GetItem(newSlot.name);
         if (!itemConfig || itemConfig.unique) {
             return null;
         }
 
         for (const [slot, itemSlot] of this.items.entries()) {
-            if (itemSlot.name === itemName) {
-                // Here you would also check metadata if it affects stacking
-                return slot;
-            }
+          if (InvManager.canStack(newSlot, itemSlot)) {
+            return slot;
+          }
         }
         return null;
     }

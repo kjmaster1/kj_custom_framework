@@ -2,6 +2,7 @@
 import {oxmysql as MySQL} from '@communityox/oxmysql';
 import {ItemSlot} from '../common';
 import {Inventory} from './inventory';
+import {GetItem} from "./configLoader";
 
 // Helper to (de)serialize item map for database
 function serializeItems(items: Map<number, ItemSlot>): string {
@@ -196,6 +197,7 @@ class InventoryManager {
 
     // 4. Get the item (if any) from the 'to' slot
     const toItem = toInv.items.get(data.to.slot);
+    const moveQuantity = data.quantity || fromItem.quantity;
 
     // ---
     // For this first step, we'll only implement the simplest case:
@@ -205,41 +207,74 @@ class InventoryManager {
     if (!toItem) {
       // CASE 1: Moving to an empty slot
 
-      // TODO: Check weight and slot limits for the 'to' inventory.
-      // e.g., if (toInv.currentWeight + (itemDef.weight * fromItem.quantity) > toInv.maxWeight) { return; }
+      const itemConfig = GetItem(fromItem.name);
+      const isUnique = itemConfig?.unique === true;
 
-      // Perform the move
-      fromInv.items.delete(data.from.slot);
-      toInv.items.set(data.to.slot, fromItem);
+      if (moveQuantity === fromItem.quantity && !isUnique) {
+        // Moving the whole stack
+        toInv.setSlot(data.to.slot, fromItem);
+        fromInv.setSlot(data.from.slot, null);
+      } else {
+        // Moving part of a stack or a unique item
+        const newItem: ItemSlot = {
+          name: fromItem.name,
+          quantity: moveQuantity,
+          metadata: fromItem.metadata,
+        };
 
-      console.log(`[Inv] Moved ${fromItem.name} from ${fromInv.id}:${data.from.slot} to ${toInv.id}:${data.to.slot}`);
+        toInv.setSlot(data.to.slot, newItem);
 
-      // 5. Notify inventories of the update
-      // This will trigger your onInventoryUpdate callback,
-      // which saves to DB and syncs to clients.
-      fromInv.triggerUpdate();
-
-      // If the inventories are different, trigger the 'to' inv as well
-      if (fromInv.id !== toInv.id) {
-        toInv.triggerUpdate();
+        fromItem.quantity -= moveQuantity;
+        fromInv.setSlot(data.from.slot, fromItem.quantity > 0 ? fromItem : null);
       }
 
+    } else if (toItem.name === fromItem.name && !GetItem(fromItem.name)?.unique && this.canStack(fromItem, toItem)) {
+      // CASE 2: Stacking
+      // We'll assume a 'maxStack' property in item config, or a default
+      const maxStack = GetItem(fromItem.name)?.maxStack || 100;
+      const canAdd = maxStack - toItem.quantity;
+
+      if (canAdd <= 0) {
+        // 'To' slot is already full, so treat it as a swap (Case 3)
+        this.performSwap(fromInv, fromItem, data.from.slot, toInv, toItem, data.to.slot);
+        return;
+      }
+
+      const amountToMove = Math.min(moveQuantity, canAdd);
+
+      toItem.quantity += amountToMove;
+      toInv.setSlot(data.to.slot, toItem);
+
+      fromItem.quantity -= amountToMove;
+      fromInv.setSlot(data.from.slot, fromItem.quantity > 0 ? fromItem : null);
+
     } else {
-      // CASE 2: Stacking (toItem exists, same name, not full stack)
-      // CASE 3: Swapping (toItem exists, different name)
-      console.warn(`[Inv] Unhandled move from ${source}: Stacking/Swapping not yet implemented.`);
-      // We will implement these in the next steps.
+      // CASE 3: Swapping
+      this.performSwap(fromInv, fromItem, data.from.slot, toInv, toItem, data.to.slot);
     }
+  }
+
+  public canStack(item1: ItemSlot, item2: ItemSlot): boolean {
+    // A real stacking check should compare metadata.
+    // For now, we just check names.
+    // TODO: Compare metadata (e.g., item1.metadata.quality === item2.metadata.quality)
+    return item1.name === item2.name;
+  }
+
+  private performSwap(fromInv: Inventory, fromItem: ItemSlot, fromSlot: number, toInv: Inventory, toItem: ItemSlot, toSlot: number) {
+    // Simple swap
+    fromInv.setSlot(fromSlot, toItem);
+    toInv.setSlot(toSlot, fromItem);
   }
 }
 
 // Create a singleton instance
 export const InvManager = new InventoryManager();
 
-
 interface MoveItemData {
   from: { inventory: string; slot: number };
   to: { inventory: string; slot: number };
+  quantity?: number;
 }
 
 /**
