@@ -5,12 +5,16 @@ import './index.css';
 import {ItemDefinitionsProvider} from "./context/ItemDefinitionsContext";
 import {TooltipProvider} from "./context/TooltipContext";
 import {DndProvider} from "react-dnd"
-import {HTML5Backend} from 'react-dnd-html5-backend';
+import { TouchBackend } from 'react-dnd-touch-backend';
 import {ContextMenuProvider} from "./context/ContextMenuContext";
+
+const dndOptions = {
+  enableMouseEvents: true,
+};
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider backend={TouchBackend} options={dndOptions}>
       <ContextMenuProvider>
         <TooltipProvider>
           <ItemDefinitionsProvider>

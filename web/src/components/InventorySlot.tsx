@@ -45,7 +45,7 @@ export const InventorySlot: React.FC<Props> = ({slotNumber, item, inventoryId}) 
 
   // --- 4. Implement useDrop ---
   // This makes the component a drop target
-  const [{isOver}, drop] = useDrop(() => ({
+  const [{isOver, canDrop}, drop] = useDrop(() => ({
     accept: ItemTypes.INVENTORY_SLOT, // It only accepts our item type
 
     // This function runs when a compatible item is dropped
@@ -77,6 +77,7 @@ export const InventorySlot: React.FC<Props> = ({slotNumber, item, inventoryId}) 
     },
     collect: (monitor) => ({
       isOver: !!monitor.isOver(), // True if a draggable item is over this slot
+      canDrop: !!monitor.canDrop(),
     }),
   }), [inventoryId, slotNumber]); // Dependencies
 
@@ -156,8 +157,8 @@ export const InventorySlot: React.FC<Props> = ({slotNumber, item, inventoryId}) 
   // This is an empty slot
   return (
     <div
-      ref={drop}
-      className={`inventory-slot empty ${isOver ? 'over' : ''}`}
+      ref={combinedRef}
+      className={`inventory-slot empty ${isOver && canDrop ? 'over' : ''} ${isOver && !canDrop ? 'blocked' : ''}`}
       data-slot-id={slotNumber}
     >
       {/* Make sure empty slots also have the wrapper for consistent layout */}

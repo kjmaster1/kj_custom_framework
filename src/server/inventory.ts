@@ -54,6 +54,13 @@ export class Inventory {
         return newWeight;
     }
 
+  public triggerUpdate() {
+    this.recalculateWeight();
+
+    // This calls the 'onInventoryUpdate' method in InventoryManager
+    this.onUpdate(this);
+  }
+
     /**
      * Gets the item in a specific slot.
      */
